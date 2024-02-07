@@ -9,13 +9,14 @@ class WelcomePage extends StatefulWidget {
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
+  static User? get result => _WelcomePageState.result;
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  static User? result = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    User? result = FirebaseAuth.instance.currentUser;
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -30,6 +31,7 @@ class _WelcomePageState extends State<WelcomePage> {
           idToken: googleSignInAuthentication.idToken,
         );
         await _auth.signInWithCredential(credential);
+        result = _auth.currentUser;
       } on FirebaseAuthException catch (e) {
         print(e.message);
         throw e;
@@ -39,6 +41,7 @@ class _WelcomePageState extends State<WelcomePage> {
     Future<void> signOutFromGoogle() async {
       await _googleSignIn.signOut();
       await _auth.signOut();
+      result = null;
     }
 
     return Scaffold(
@@ -56,7 +59,9 @@ class _WelcomePageState extends State<WelcomePage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/sign-in');
+                // Navigator.pushNamed(context, '/sign-in');
+                signInwithGoogle();
+                User? user = FirebaseAuth.instance.currentUser;
               },
               child: const Text('Sign In'),
             ),
@@ -72,7 +77,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       return AlertDialog(
                         title: const Text('Error'),
                         content: const Text(
-                            'You must be signed in to access the home page.'),
+                            'You must be signed in to view the Informations.'),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
@@ -86,7 +91,21 @@ class _WelcomePageState extends State<WelcomePage> {
                   );
                 }
               },
-              child: const Text('Home'),
+              child: const Text('View User Information'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                signOutFromGoogle();
+              },
+              child: const Text('Logout From Google'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/sign-in-facebook');
+              },
+              child: const Text('Sign Up With Facebook'),
             ),
           ],
         ),

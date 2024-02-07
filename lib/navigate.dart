@@ -6,7 +6,7 @@ import 'package:flutterscaleapp/welcome_page.dart';
 class Navigate {
   static Map<String, Widget Function(BuildContext)> routes = {
     '/': (context) => WelcomePage(),
-    '/sign-in': (context) => SignInPage(),
+    '/sign-in-facebook': (context) => SignInPage(),
     '/home': (context) => HomePage()
   };
 }

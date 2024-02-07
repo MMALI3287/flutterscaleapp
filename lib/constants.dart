@@ -1,3 +1,3 @@
 class Constants {
-  static const String title = 'title page';
+  static const String title = 'Login With Google';
 }
