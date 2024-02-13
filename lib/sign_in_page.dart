@@ -14,7 +14,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In Facebook'),
+        title: const Text('Sign In Facebook'),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -36,30 +36,40 @@ class _SignInPageState extends State<SignInPage> {
                               ),
                             );
                       },
-                      child: Text("Log Out"))
+                      child: const Text("Log Out"))
                 ],
               )
             : Center(
                 child: ElevatedButton(
-                  child: Text("Login with Facebook"),
+                  child: const Text("Login with Facebook"),
                   onPressed: () async {
-                    FacebookAuth.instance
-                        .login(permissions: ["public_profile", "email"]).then(
-                      (value) {
-                        FacebookAuth.instance.getUserData().then(
-                          (userData) async {
-                            setState(
-                              () {
-                                _isLoggedIn = true;
-                                _userObj = userData;
-                              },
-                            );
-                          },
-                        );
-                      },
-                    );
+                    final LoginResult result = await FacebookAuth.instance
+                        .login(); // by default we request the email and the public profile
+// or FacebookAuth.i.login()
+                    if (result.status == LoginStatus.success) {
+                      // you are logged
+                      final AccessToken accessToken = result.accessToken!;
+                    } else {
+                      print(result.status);
+                      print(result.message);
+                    }
+                    // FacebookAuth.instance
+                    //     .login(permissions: ["public_profile", "email"]).then(
+                    //   (value) {
+                    //     FacebookAuth.instance.getUserData().then(
+                    //       (userData) async {
+                    //         setState(
+                    //           () {
+                    //             _isLoggedIn = true;
+                    //             _userObj = userData;
+                    //           },
+                    //         );
+                    //       },
+                    //     );
+                    //   },
+                    // );
                   },
-                ), // Add an else condition to handle when _isLoggedIn is false
+                ),
               ),
       ),
     );
